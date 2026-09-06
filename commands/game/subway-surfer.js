@@ -27,7 +27,6 @@ module.exports = {
             const poll = response.poll
 
             const winner = Array.from(poll.answers.values()).reduce((highest, answer) => answer.voteCount > highest.voteCount ? answer : highest).text
-            console.log(winner)
 
             await message.delete();
             message = await interaction.channel.send({
