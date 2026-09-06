@@ -17,33 +17,65 @@ module.exports = {
      */
     async execute(interaction) {
 
-        const row = new ActionRowBuilder().addComponents(
+        const row1 = new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+                .setCustomId('blank1')
+                .setLabel('‎')
+                .setStyle(ButtonStyle.Secondary)
+                .setDisabled(true),
+
             new ButtonBuilder()
                 .setCustomId('Up')
-                .setLabel('⬆️ Up')
+                .setLabel('⬆️')
                 .setStyle(ButtonStyle.Primary),
 
             new ButtonBuilder()
-                .setCustomId('Down')
-                .setLabel('⬇️ Down')
-                .setStyle(ButtonStyle.Primary),
+                .setCustomId('blank2')
+                .setLabel('‎')
+                .setStyle(ButtonStyle.Secondary)
+                .setDisabled(true)
+        );
 
+        const row2 = new ActionRowBuilder().addComponents(
             new ButtonBuilder()
                 .setCustomId('Left')
-                .setLabel('⬅️ Left')
+                .setLabel('⬅️')
                 .setStyle(ButtonStyle.Primary),
+
+            new ButtonBuilder()
+                .setCustomId('Center')
+                .setLabel('⚫')
+                .setStyle(ButtonStyle.Secondary)
+                .setDisabled(true),
 
             new ButtonBuilder()
                 .setCustomId('Right')
-                .setLabel('➡️ Right')
+                .setLabel('➡️')
                 .setStyle(ButtonStyle.Primary)
         );
 
-        const channel = interaction.channel
+        const row3 = new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+                .setCustomId('blank3')
+                .setLabel('‎')
+                .setStyle(ButtonStyle.Secondary)
+                .setDisabled(true),
+
+            new ButtonBuilder()
+                .setCustomId('Down')
+                .setLabel('⬇️')
+                .setStyle(ButtonStyle.Primary),
+
+            new ButtonBuilder()
+                .setCustomId('blank4')
+                .setLabel('‎')
+                .setStyle(ButtonStyle.Secondary)
+                .setDisabled(true)
+        );
 
         await interaction.reply({
             content: '🕹️ **Vote for the next direction!**',
-            components: [row]
+            components: [row1, row2, row3]
         });
 
         const message = await interaction.fetchReply();
@@ -53,13 +85,13 @@ module.exports = {
 
         collector.on('collect', async buttonInteraction => {
             const direction = buttonInteraction.customId;
-            votes[direction]++;
+            if (!direction.startsWith('blank')) votes[direction]++;
 
             await buttonInteraction.deferUpdate();
         });
 
         setInterval(async () => {
-            
+
             const total = votes.Down + votes.Left + votes.Right + votes.Up;
             if (total == 0) return;
 
