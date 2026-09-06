@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, ChatInputCommandInteraction, MessageFlags } = require('discord.js');
+const robot = require('robotjs');
 
 module.exports = {
     data: new SlashCommandBuilder().setName('subway-surfer').setDescription('Start a game of subway surfers'),
@@ -8,6 +9,7 @@ module.exports = {
     async execute(interaction) {
 
         await interaction.reply({ flags: MessageFlags.Ephemeral, content: 'Starting game!' })
+        robot.mouseClick();
 
         let message = await interaction.channel.send({
             poll: {
@@ -27,6 +29,7 @@ module.exports = {
             const poll = response.poll
 
             const winner = Array.from(poll.answers.values()).reduce((highest, answer) => answer.voteCount > highest.voteCount ? answer : highest).text
+            robot.keyTap(winner.toLowerCase())
 
             await message.delete();
             message = await interaction.channel.send({
