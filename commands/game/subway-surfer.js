@@ -8,6 +8,8 @@ const votes = {
     Right: 0
 };
 
+const THRESHOLD = 1;
+
 module.exports = {
     data: new SlashCommandBuilder().setName('subway-surfer').setDescription('Start a game of subway surfers'),
     /**
@@ -62,10 +64,11 @@ module.exports = {
             if (total == 0) return;
 
             const winner = Object.entries(votes).reduce((highest, current) => highest[1] > current[1] ? highest : current);
+            if (winner[1] < THRESHOLD) return;
             robot.keyTap(winner[0].toLowerCase())
 
             votes.Down = 0; votes.Left = 0; votes.Right = 0; votes.Up = 0;
 
-        }, 750);
+        }, 100);
     },
 };
