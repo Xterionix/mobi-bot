@@ -31,7 +31,6 @@ module.exports = {
             const winner = Array.from(poll.answers.values()).reduce((highest, answer) => answer.voteCount > highest.voteCount ? answer : highest).text
             robot.keyTap(winner.toLowerCase())
 
-            await message.delete();
             message = await interaction.channel.send({
                 poll: {
                     question: { text: 'Which direction next?' },
@@ -45,6 +44,6 @@ module.exports = {
                 }
             });
 
-        }, 3000);
+        }, 2000);
     },
 };
