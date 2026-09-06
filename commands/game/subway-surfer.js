@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ChatInputCommandInteraction } = require('discord.js');
+const { SlashCommandBuilder, ChatInputCommandInteraction, MessageFlags } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder().setName('subway-surfer').setDescription('Start a game of subway surfers'),
@@ -6,7 +6,10 @@ module.exports = {
      * @param {ChatInputCommandInteraction<import('discord.js').CacheType>} interaction 
      */
     async execute(interaction) {
-        await interaction.reply({
+
+        await interaction.reply({ flags: MessageFlags.Ephemeral, content: 'Starting game!' })
+
+        let message = await interaction.channel.send({
             poll: {
                 question: { text: 'Which direction next?' },
                 answers: [
@@ -18,13 +21,28 @@ module.exports = {
                 allowMultiselect: false
             }
         });
-        setTimeout(async () => {
-            const response = await interaction.fetchReply();
-            const poll = response.poll
-            await poll.end()
 
-            const winner = Array.from(poll.answers.values()).sort((a, b) => a.voteCount - b.voteCount).pop().text
-            
+        setInterval(async () => {
+            const response = await message.fetch();
+            const poll = response.poll
+
+            const winner = Array.from(poll.answers.values()).reduce((highest, answer) => answer.voteCount > highest.voteCount ? answer : highest).text
+            console.log(winner)
+
+            await message.delete();
+            message = await interaction.channel.send({
+                poll: {
+                    question: { text: 'Which direction next?' },
+                    answers: [
+                        { text: 'Up', emoji: { name: '⬆️' } },
+                        { text: 'Down', emoji: { name: '⬇️' } },
+                        { text: 'Left', emoji: { name: '⬅️' } },
+                        { text: 'Right', emoji: { name: '➡️' } }
+                    ],
+                    allowMultiselect: false
+                }
+            });
+
         }, 3000);
     },
 };
